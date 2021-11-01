@@ -66,6 +66,7 @@ export const FilterColor = styled.div`
   height: 20px;
   border-radius: 50%;
   background-color: ${(props) => props.color};
+  border: ${(props) => props.color === props.choosen && "0.5px solid black"};
   margin: 0 5px;
   cursor: pointer;
 `;

@@ -1,5 +1,19 @@
-import React from "react";
-
+import React, { useEffect, useState } from "react";
+// Components
+import Navbar from "../../components//Navbar";
+import Announcement from "../../components//Announcement";
+import Newsletter from "../../components//Newsletter";
+import Footer from "../../components//Footer";
+// Material UI Icons
+import { Add, Remove } from "@material-ui/icons";
+// React Router
+import { useLocation } from "react-router";
+// Axios
+import { publicRequest } from "../../requestMethods";
+// Redux
+import { addProduct } from "../../redux/cartRedux";
+import { useDispatch } from "react-redux";
+// Styled Components
 import {
   AddContainer,
   Amount,
@@ -21,60 +35,94 @@ import {
   Wrapper,
 } from "./SingleProduct.styles";
 
-import Navbar from "../../components//Navbar";
-import Announcement from "../../components//Announcement";
-import Newsletter from "../../components//Newsletter";
-import Footer from "../../components//Footer";
-import { Add, Remove } from "@material-ui/icons";
-
 const SingleProduct = () => {
+  const dispatch = useDispatch();
+
+  const [product, setProduct] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [color, setColor] = useState("");
+  const [size, setSize] = useState("");
+
+  const location = useLocation();
+  const productId = location.pathname.split("/").pop();
+
+  useEffect(() => {
+    const getProduct = async () => {
+      try {
+        const response = await publicRequest.get("/products/find/" + productId);
+        setProduct(response.data);
+      } catch (err) {}
+    };
+    getProduct();
+  }, [productId]);
+
+  const handleClick = () => {
+    dispatch(addProduct({ ...product, quantity, color, size }));
+  };
+
+  console.log(color);
   return (
     <Container>
-      <Navbar />
-      <Announcement />
-      <Wrapper>
-        <ImageContainer>
-          <Image src="https://i.ibb.co/S6qMxwr/jean.jpg" />
-        </ImageContainer>
-        <InfoContainer>
-          <Title>Denim Jumpsuit</Title>
-          <Desc>
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Itaque,
-            cupiditate! Alias molestias sequi atque aliquid sed recusandae
-            libero! Quos voluptates quis deserunt dolores beatae ullam
-            perspiciatis omnis culpa facere quae.
-          </Desc>
-          <Price>$ 20</Price>
-          <FilterContainer>
-            <Filter>
-              <FilterTitle>Color</FilterTitle>
-              <FilterColor color="black" />
-              <FilterColor color="darkblue" />
-              <FilterColor color="gray" />
-            </Filter>
-            <Filter>
-              <FilterTitle>Size</FilterTitle>
-              <FilterSize>
-                <FilterSizeOption>XS</FilterSizeOption>
-                <FilterSizeOption>S</FilterSizeOption>
-                <FilterSizeOption>M</FilterSizeOption>
-                <FilterSizeOption>L</FilterSizeOption>
-                <FilterSizeOption>XL</FilterSizeOption>
-              </FilterSize>
-            </Filter>
-          </FilterContainer>
-          <AddContainer>
-            <AmountContainer>
-              <Remove />
-              <Amount>1</Amount>
-              <Add />
-            </AmountContainer>
-            <Button>ADD TO CART</Button>
-          </AddContainer>
-        </InfoContainer>
-      </Wrapper>
-      <Newsletter />
-      <Footer />
+      {!product ? (
+        <>Loading...</>
+      ) : (
+        <>
+          <Navbar />
+          <Announcement />
+          <Wrapper>
+            <ImageContainer>
+              <Image src={product.img} />
+            </ImageContainer>
+            <InfoContainer>
+              <Title>{product.title}</Title>
+              <Desc>{product.desc}</Desc>
+              <Price>$ {product.price}</Price>
+              <FilterContainer>
+                <Filter>
+                  <FilterTitle>Colors: </FilterTitle>
+                  {product.color.map((availableColor) => (
+                    <FilterColor
+                      color={availableColor}
+                      choosen={color}
+                      key={availableColor}
+                      onClick={() => {
+                        setColor(availableColor);
+                      }}
+                    />
+                  ))}
+                </Filter>
+                <Filter>
+                  <FilterTitle>Size</FilterTitle>
+                  <FilterSize onChange={(event) => setSize(event.target.value)}>
+                    <FilterSizeOption defaultValue>Size</FilterSizeOption>
+                    {product.size.map((size) => (
+                      <FilterSizeOption value={size} key={size}>
+                        {size}
+                      </FilterSizeOption>
+                    ))}
+                  </FilterSize>
+                </Filter>
+              </FilterContainer>
+              <AddContainer>
+                <AmountContainer>
+                  <Remove
+                    onClick={() => quantity > 1 && setQuantity(quantity - 1)}
+                    style={{ cursor: "pointer" }}
+                  />
+                  <Amount>{quantity}</Amount>
+                  <Add
+                    onClick={() => setQuantity(quantity + 1)}
+                    style={{ cursor: "pointer" }}
+                  />
+                </AmountContainer>
+                <Button onClick={handleClick}>ADD TO CART</Button>
+              </AddContainer>
+            </InfoContainer>
+          </Wrapper>
+          <Newsletter />
+          <Footer />
+        </>
+      )}
     </Container>
   );
 };

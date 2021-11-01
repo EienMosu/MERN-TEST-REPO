@@ -1,4 +1,5 @@
 import React from 'react'
+// Styled Components
 import { Container } from './Announcement.styles'
 
 const Announcement = () => {

@@ -1,3 +1,5 @@
+import React from "react";
+// Material UI Icons
 import {
   Facebook,
   Instagram,
@@ -7,7 +9,7 @@ import {
   Room,
   Twitter,
 } from "@material-ui/icons";
-import React from "react";
+// Styled Components
 import {
   Center,
   ContactItem,

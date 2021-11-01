@@ -1,5 +1,7 @@
-import { Send } from "@material-ui/icons";
 import React from "react";
+// Material UI Icons
+import { Send } from "@material-ui/icons";
+// Styled Components
 import {
   Button,
   Container,

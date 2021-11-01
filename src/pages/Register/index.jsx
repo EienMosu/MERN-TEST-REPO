@@ -1,5 +1,14 @@
 import React from "react";
-import { Agreement, Button, Container, Form, Input, Title, Wrapper } from "./Register.styles";
+// Styled Components
+import {
+  Agreement,
+  Button,
+  Container,
+  Form,
+  Input,
+  Title,
+  Wrapper,
+} from "./Register.styles";
 
 const Register = () => {
   return (
